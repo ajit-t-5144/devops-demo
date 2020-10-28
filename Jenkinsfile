@@ -1,10 +1,17 @@
 pipeline {
   agent any
+  tools { 
+        maven 'Maven 3.6.3' 
+        jdk 'jdk8' 
+    }
   stages {
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
+        withSonarQubeEnv(credentialsId: 'sonar1') {
+         sh 'mvn $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+        }
       }
     }
 
