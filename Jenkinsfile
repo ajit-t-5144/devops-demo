@@ -1,5 +1,8 @@
 pipeline {
   agent any
+    tools { 
+        maven 'Maven 3.6.3'
+    }
   stages {
     stage('Static-analysis') {
       steps {
@@ -7,7 +10,9 @@ pipeline {
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
         //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'sonarqube')
-        sh 'mvn $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+                {
+                  sh 'mvn $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+                }
       }
     }
 
