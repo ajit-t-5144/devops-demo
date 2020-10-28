@@ -7,7 +7,7 @@ pipeline {
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
         //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'sonarqube')
-             {    withMaven(maven : 'apache-maven-3.6.1'){
+             {    withMaven{
                   sh 'maven $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
                     }
                 }
