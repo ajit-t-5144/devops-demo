@@ -5,6 +5,7 @@ pipeline {
       steps {
         echo 'Static code Analysis'
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
+        waitForQualityGate(abortPipeline: true, credentialsId: 'sonar', webhookSecretId: '2jjswjbdbenksxninwdcwidnc')
       }
     }
 
