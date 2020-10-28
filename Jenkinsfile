@@ -1,5 +1,6 @@
 pipeline {
   agent any
+  define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
   tools { 
         maven 'maven' 
         jdk  'jdk'
@@ -37,9 +38,37 @@ pipeline {
       }
     }
 
+    stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "ARTIFACTORY_SERVER",
+                    url: SERVER_URL,
+                    credentialsId: artifactory
+                )
+
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
+                )
+
+                rtMavenResolver (
+                    id: "MAVEN_RESOLVER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+            }
+        }
+    
     stage('Store Artifact') {
       steps {
         echo 'Store Artifact'
+        sh 'mvn clean install'
+        deployerId: "MAVEN_DEPLOYER",
+        resolverId: "MAVEN_RESOLVER"
+        rtPublishBuildInfo ( serverId: "ARTIFACTORY_SERVER")
       }
     }
 
