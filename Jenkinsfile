@@ -2,6 +2,7 @@ pipeline {
   agent any
   tools { 
         maven 'maven' 
+        jdk  'jdk'
     }
   stages {
     stage('Static-analysis') {
@@ -11,7 +12,8 @@ pipeline {
         //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'sonarqube')
              {    withMaven{
-                  sh 'maven $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+                  //sh 'maven $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+                  sh 'mvn -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.sources=. sonar:sonar -Dsonar.host.url=http://35.193.147.208:9000'
                     }
                 }
       }
