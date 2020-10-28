@@ -30,6 +30,7 @@ pipeline {
     stage('Deploy To Test') {
       steps {
         echo 'Deploy to Test'
+        sh 'mvn clean package'
       }
     }
 
