@@ -23,6 +23,7 @@ pipeline {
     stage('Compile-Build') {
       steps {
         echo 'Build the code'
+        sh 'mvn clean compile'
       }
     }
 
