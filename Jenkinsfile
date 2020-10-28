@@ -1,7 +1,7 @@
 pipeline {
   agent any
     tools { 
-        maven 'Maven 3.6.3'
+        maven "Maven 3.6.3"
     }
   stages {
     stage('Static-analysis') {
@@ -11,7 +11,7 @@ pipeline {
         //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonarqube', installationName: 'sonarqube')
                 {
-                  sh 'mvn $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
+                  sh 'maven $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
                 }
       }
     }
