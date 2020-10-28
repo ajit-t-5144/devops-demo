@@ -17,6 +17,7 @@ pipeline {
                   sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://104.42.72.53:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
                   }
                 }
+        slackSend channel: '#devops', message: 'Stattic test analysis completed'
       }
     }
 
@@ -32,6 +33,7 @@ pipeline {
         echo 'Deploy to Test'
         sh 'mvn clean package'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://52.142.4.251:8080')], contextPath: '/QAWebapp', war: '**/*.war'
+        slackSend channel: '#devops', message: 'Code deployed to Test Server'
       }
     }
 
