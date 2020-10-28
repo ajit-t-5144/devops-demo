@@ -11,6 +11,7 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                 ''' 
             }
+    }
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
