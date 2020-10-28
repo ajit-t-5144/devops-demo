@@ -4,14 +4,6 @@ pipeline {
         maven 'maven' 
     }
   stages {
-    stage ('Initialize') {
-            steps {
-                sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                ''' 
-            }
-    }
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
