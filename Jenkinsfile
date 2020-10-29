@@ -16,7 +16,6 @@ pipeline {
       steps {
         echo 'Static code Analysis'
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
-        //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
            {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://138.91.197.195:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
             }
