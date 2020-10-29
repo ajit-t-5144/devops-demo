@@ -1,6 +1,18 @@
 pipeline {
   agent any
-  //define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
+ 
+  // environment variables
+  environment {
+    
+    buildnum = currentBuild.getNumber()
+    
+    gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
+    gitBranch = "*/master"
+    
+    sChannel = "#devops"
+    
+  }
+  
   
   //Global tools 
   tools { 
@@ -11,11 +23,18 @@ pipeline {
   // Job stages
   stages {
     
+    //Initiating the Jenkins Build 
+    stage ('Initiation') {
+      
+      steps {
+        slackSend channel: "${sChannel}", message: 'Starting Jenkins Build for Devops Web App . Build Number:' + "${buildnum}"
+      }
+    }
     // Static code analysis - inject sonarqube 
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
+        checkout([$class: 'GitSCM', branches: [[name: "${gitBranch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${gitURL}"]]])
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
            {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://13.64.108.228:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
             }
@@ -87,6 +106,12 @@ pipeline {
         slackSend channel: '#devops', message: 'Sanity test completed successfully'
       }
     }
+    
+    stage ('Completion') {
+      
+      steps {
+        slackSend channel: "${sChannel}", message: 'jenkins Build ' + "${buildnum}" + ' completed Successfully'
+      }
 
   } //Job stages end 
 } // end of Pipeline
