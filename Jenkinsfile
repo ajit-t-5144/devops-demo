@@ -58,7 +58,7 @@ pipeline {
     stage('Performance Test') {
       steps {
         echo 'Performance test'
-        blazeMeterTest credentialsId: 'blazemeter', mainTestFile: 'http://40.88.14.229:8080/QAWebapp/', testId: '8642530.taurus', workspaceId: '680689'
+        blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
       }
     }
 
