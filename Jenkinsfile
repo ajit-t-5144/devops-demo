@@ -62,6 +62,9 @@ pipeline {
     stage('Deploy to Production') {
       steps {
         echo 'Deploy to Production'
+        sh 'mvn clean install'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://40.88.9.18:8080')], contextPath: '/ProdWebapp', war: '**/*.war'
+        slackSend channel: '#devops', message: 'Code deployed to prod server'
       }
     }
 
