@@ -1,39 +1,21 @@
 pipeline {
   agent any
-
-// Define environment variabls 
-  environment {
-    git_url = 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git'
-    
-    SONAR_HOST_URL = 'http://104.42.72.53:9000'
-    sonar_login = admin
-    sonar_pwd = admin
-    
-    test_tomcat_url = 'http://52.142.4.251:8080'
-    prod_tomcat_url = 'http://52.142.4.251:8080'
-    tomcat_path = '/QAWebapp'
-    
-    
-  }
-  
- // define tools  
+  //define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
   tools { 
         maven 'maven' 
         jdk  'jdk'
     }
-  // Stages 
-  
   stages {
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: ${git_url}]]])
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
         //waitForQualityGate(abortPipeline: true, credentialsId: 'sonarqube', installationName: 'sonarqube')
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
            {    withMaven{
                   //sh 'maven $SONAR_MAVEN_GOAL -Dsonar.host.url=$SONAR_HOST_URL'
                   //sh 'mvn -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.sources=. sonar:sonar -Dsonar.host.url=http://35.193.147.208:9000'
-             sh 'mvn clean compile sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=${sonar_login} -Dsonar.password=${sonar_pwd}' 
+                  sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://138.91.197.195:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
                   }
                 }
         slackSend channel: '#devops', message: 'Stattic test analysis completed'
@@ -51,7 +33,7 @@ pipeline {
       steps {
         echo 'Deploy to Test'
         sh 'mvn clean package'
-        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: ${test_tomcat_url})], contextPath: ${tomcat_path}, war: '**/*.war'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://40.88.14.229:8080')], contextPath: '/QAWebapp', war: '**/*.war'
         slackSend channel: '#devops', message: 'Code deployed to Test Server'
       }
     }
