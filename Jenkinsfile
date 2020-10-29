@@ -112,6 +112,7 @@ pipeline {
       steps {
         slackSend channel: "${sChannel}", message: 'jenkins Build ' + "${buildnum}" + ' completed Successfully'
       }
-
+    }
+    
   } //Job stages end 
 } // end of Pipeline
