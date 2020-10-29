@@ -38,44 +38,11 @@ pipeline {
       }
     }
     
-    stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "ARTIFACTORY_SERVER",
-                    url: 'https://ajdevopstcs1.jfrog.io/artifactory',
-                    credentialsId: Artifactory
-                )
-
-                rtMavenDeployer (
-                    id: "MAVEN_DEPLOYER",
-                    serverId: "ARTIFACTORY_SERVER",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
-                )
-
-                rtMavenResolver (
-                    id: "MAVEN_RESOLVER",
-                    serverId: "ARTIFACTORY_SERVER",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-            }
-        }
     
     stage('Store Artifact') {
       steps {
-        echo 'Store Artifact'
-        rtMavenRun (
-                    tool: MAVEN_TOOL, // Tool name from Jenkins configuration
-                    pom: 'maven-example/pom.xml',
-                    goals: 'clean install',
-                    deployerId: "MAVEN_DEPLOYER",
-                    resolverId: "MAVEN_RESOLVER"
-                )
-        rtPublishBuildInfo (
-                    serverId: "ARTIFACTORY_SERVER"
-                )
-        
+        echo 'Store Artifact'   
+        rtPublishBuildInfo (serverId: 'artifactory')
       }
     }
 
