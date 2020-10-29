@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
+  //define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
   tools { 
         maven 'maven' 
         jdk  'jdk'
