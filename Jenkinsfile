@@ -41,7 +41,8 @@ pipeline {
     
     stage('Store Artifact') {
       steps {
-        echo 'Store Artifact'   
+        echo 'Store Artifact' 
+        rtUpload(serverId: 'artifactory')
         rtPublishBuildInfo (serverId: 'artifactory')
       }
     }
