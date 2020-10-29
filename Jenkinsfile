@@ -38,24 +38,44 @@ pipeline {
       }
     }
     
+    stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "ARTIFACTORY_SERVER",
+                    url: SERVER_URL,
+                    credentialsId: CREDENTIALS
+                )
+
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: "libs-release-local",
+                    snapshotRepo: "libs-snapshot-local"
+                )
+
+                rtMavenResolver (
+                    id: "MAVEN_RESOLVER",
+                    serverId: "ARTIFACTORY_SERVER",
+                    releaseRepo: "libs-release",
+                    snapshotRepo: "libs-snapshot"
+                )
+            }
+        }
+    
     stage('Store Artifact') {
       steps {
         echo 'Store Artifact'
-        sh 'mvn clean install'
-        define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
-        define buildInfo = artifactory.newBuildInfo()
-        buildInfo.env.capture = true
-        define rtMaven = artifactory.newMavenBuild()
-        rtMaven.tool = maven // Tool name from Jenkins configuration
-        rtMaven.opts = "-Denv=dev"
-        rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
-        rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
-
-        rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
-
-        buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
-          // Publish build info.
-        server.publishBuildInfo buildInfo
+        rtMavenRun (
+                    tool: MAVEN_TOOL, // Tool name from Jenkins configuration
+                    pom: 'maven-example/pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER",
+                    resolverId: "MAVEN_RESOLVER"
+                )
+        rtPublishBuildInfo (
+                    serverId: "ARTIFACTORY_SERVER"
+                )
+        
       }
     }
 
