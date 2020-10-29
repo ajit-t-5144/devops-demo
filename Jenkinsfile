@@ -37,38 +37,25 @@ pipeline {
         slackSend channel: '#devops', message: 'Code deployed to Test Server'
       }
     }
-
-    stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "ARTIFACTORY_SERVER",
-                    url: SERVER_URL,
-                    credentialsId: artifactory
-                )
-
-                rtMavenDeployer (
-                    id: "MAVEN_DEPLOYER",
-                    serverId: "ARTIFACTORY_SERVER",
-                    releaseRepo: "libs-release-local",
-                    snapshotRepo: "libs-snapshot-local"
-                )
-
-                rtMavenResolver (
-                    id: "MAVEN_RESOLVER",
-                    serverId: "ARTIFACTORY_SERVER",
-                    releaseRepo: "libs-release",
-                    snapshotRepo: "libs-snapshot"
-                )
-            }
-        }
     
     stage('Store Artifact') {
       steps {
         echo 'Store Artifact'
         sh 'mvn clean install'
-        deployerId: "MAVEN_DEPLOYER",
-        resolverId: "MAVEN_RESOLVER"
-        rtPublishBuildInfo ( serverId: "ARTIFACTORY_SERVER")
+          define artifactserver = artifactory.server('ajdevopstcs1.jfrog.io')
+          def buildInfo = artifactory.newBuildInfo()
+          buildInfo.env.capture = true
+          def rtMaven = artifactory.newMavenBuild()
+          rtMaven.tool = MAVEN_TOOL // Tool name from Jenkins configuration
+          rtMaven.opts = "-Denv=dev"
+          rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
+          rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
+
+          rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo
+
+          buildInfo.retention maxBuilds: 10, maxDays: 7, deleteBuildArtifacts: true
+          // Publish build info.
+          server.publishBuildInfo buildInfo
       }
     }
 
