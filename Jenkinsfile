@@ -42,8 +42,8 @@ pipeline {
             steps {
                 rtServer (
                     id: "ARTIFACTORY_SERVER",
-                    url: SERVER_URL,
-                    credentialsId: CREDENTIALS
+                    url: artifactory.server('ajdevopstcs1.jfrog.io'),
+                    credentialsId: artifactory
                 )
 
                 rtMavenDeployer (
