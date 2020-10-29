@@ -17,7 +17,7 @@ pipeline {
         echo 'Static code Analysis'
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
-           {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://138.91.197.195:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
+           {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://13.64.108.228:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
             }
         slackSend channel: '#devops', message: 'Stattic test analysis completed'
       }
@@ -37,7 +37,7 @@ pipeline {
       steps {
         echo 'Deploy to Test'
         sh 'mvn clean package'
-        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://40.88.14.229:8080')], contextPath: '/QAWebapp', war: '**/*.war'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://13.82.213.187:8080')], contextPath: '/QAWebapp', war: '**/*.war'
         slackSend channel: '#devops', message: 'Code deployed to Test Server'
       }
     }
@@ -64,7 +64,7 @@ pipeline {
     stage('Performance Test') {
       steps {
         echo 'Performance test'
-        blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
+        //blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
       }
     }
 
@@ -73,7 +73,7 @@ pipeline {
       steps {
         echo 'Deploy to Production'
         sh 'mvn clean install'
-        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://40.88.9.18:8080')], contextPath: '/ProdWebapp', war: '**/*.war'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: 'http://13.82.211.112:8080')], contextPath: '/ProdWebapp', war: '**/*.war'
         slackSend channel: '#devops', message: 'Code deployed to prod server'
       }
     }
