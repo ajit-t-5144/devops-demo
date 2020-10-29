@@ -15,6 +15,17 @@ pipeline {
     tomcatTest = "http://13.82.213.187:8080"
     tomcatProd = "http://13.82.211.112:8080"
     
+    //tomcat deploy
+    testPath = "/QAWebapp"
+    prodPath = "/ProdWebapp"
+    
+    
+    //UI retprt path
+    uiPath = "\\functionaltest\\target\\surefire-reports" 
+    
+    //Sanity Report Path 
+    sanityPath = "\\Acceptancetest\\target\\surefire-reports"
+    
     //Slack Channel details
     sChannel = "#devops"
     
@@ -63,7 +74,7 @@ pipeline {
       steps {
         echo 'Deploy to Test'
         sh 'mvn clean package'
-        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatTest}")], contextPath: '/QAWebapp', war: '**/*.war'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatTest}")], contextPath: "${testPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to Test Server'
       }
     }
@@ -83,7 +94,7 @@ pipeline {
       steps {
         echo 'UI Test'
         sh 'mvn test -f functionaltest/pom.xml'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\functionaltest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'UI-Test', reportTitles: ''])
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: "${uiPath}", reportFiles: 'index.html', reportName: 'UI-Test', reportTitles: ''])
         slackSend channel: "${sChannel}", message: 'UI Test Completed Successfully'
       }
     }
@@ -101,7 +112,7 @@ pipeline {
       steps {
         echo 'Deploy to Production'
         sh 'mvn clean install'
-        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: '/ProdWebapp', war: '**/*.war'
+        deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: "${prodPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to prod server'
       }
     }
@@ -111,7 +122,7 @@ pipeline {
       steps {
         echo 'Perform Sanity Check'
         sh 'mvn test'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\Acceptancetest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'Sanity Test report', reportTitles: ''])
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: "${sanityPath}", reportFiles: 'index.html', reportName: 'Sanity Test report', reportTitles: ''])
         slackSend channel: "${sChannel}", message: 'Sanity test completed successfully'
       }
     }
