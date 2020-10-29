@@ -73,6 +73,9 @@ pipeline {
     stage('Perform Sanity Check') {
       steps {
         echo 'Perform Sanity Check'
+        sh 'mvn test'
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\Acceptancetest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'Sanity Test report', reportTitles: ''])
+        slackSend channel: '#devops', message: 'Sanity test completed successfully'
       }
     }
 
