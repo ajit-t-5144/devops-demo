@@ -43,7 +43,7 @@ pipeline {
                 rtServer (
                     id: "ARTIFACTORY_SERVER",
                     url: 'https://ajdevopstcs1.jfrog.io/artifactory'
-                    credentialsId: artifactory
+                    credentialsId: Artifactory
                 )
 
                 rtMavenDeployer (
