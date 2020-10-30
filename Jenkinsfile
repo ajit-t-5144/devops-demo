@@ -11,14 +11,20 @@ pipeline {
     gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
     gitBranch = "*/master"
     
-    //tomcat URL
+    //tomcat TEST Url and Path 
     tomcatTest = "http://13.82.213.187:8080"
-    tomcatProd = "http://13.82.211.112:8080"
-    
-    //tomcat deploy
     testPath = "/QAWebapp"
+    
+    //tomcat PROD URL and Path 
+    tomcatProd = "http://13.82.211.112:8080"
     prodPath = "/ProdWebapp"
     
+    
+    // Sonarqube URL 
+    sonarPath = 'http://13.64.108.228:9000'
+    
+    sonarInclusion = '**/test/java/servlet/createpage_junit.java'
+    sonarExclusion = '**/test/java/servlet/createpage_junit.java'
     
     //UI retprt path
     uiPath = "\\functionaltest\\target\\surefire-reports" 
@@ -54,7 +60,7 @@ pipeline {
         echo 'Static code Analysis'
         checkout([$class: 'GitSCM', branches: [[name: "${gitBranch}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "${gitURL}"]]])
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
-           {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=http://13.64.108.228:9000 -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=**/test/java/servlet/createpage_junit.java -Dsonar.test.exclusions=**/test/java/servlet/createpage_junit.java -Dsonar.login=admin -Dsonar.password=admin' 
+        {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=${sonarPath} -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=${sonarInclusion} -Dsonar.test.exclusions=${sonarExclusion} -Dsonar.login=admin -Dsonar.password=admin' 
             }
         slackSend channel: '#devops', message: 'Stattic test analysis completed'
       }
