@@ -4,7 +4,7 @@ pipeline {
     stage('Static-analysis') {
       steps {
         echo 'Static code Analysis'
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
+        //checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git']]])
       }
     }
 
@@ -19,6 +19,10 @@ pipeline {
         echo 'Deploy to Test'
       }
     }
+    
+  } // Stage 1 complete 
+  
+  stages{
     
     // Start of Parallel Step 
     parallel {
@@ -42,6 +46,9 @@ pipeline {
    
     } // End of Parallel
     
+  } // Stage 2 complete 
+  
+  stages{
     
     stage('Deploy to Production') {
       steps {
@@ -55,5 +62,5 @@ pipeline {
       }
     }
 
-  }
+  }// Stage 3 complete 
 }
