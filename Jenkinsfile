@@ -19,25 +19,30 @@ pipeline {
         echo 'Deploy to Test'
       }
     }
+    
+    // Start of Parallel Step 
+    parallel {
+        stage('Store Artifact') {
+          steps {
+            echo 'Store Artifact'
+          }
+        }
 
-    stage('Store Artifact') {
-      steps {
-        echo 'Store Artifact'
-      }
-    }
+        stage('Perform UI Test') {
+          steps {
+            echo 'UI Test'
+          }
+        }
 
-    stage('Perform UI Test') {
-      steps {
-        echo 'UI Test'
-      }
-    }
-
-    stage('Performance Test') {
-      steps {
-        echo 'Performance test'
-      }
-    }
-
+        stage('Performance Test') {
+          steps {
+            echo 'Performance test'
+          }
+        }
+   
+    } // End of Parallel
+    
+    
     stage('Deploy to Production') {
       steps {
         echo 'Deploy to Production'
