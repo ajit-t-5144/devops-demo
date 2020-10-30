@@ -95,24 +95,35 @@ pipeline {
       }
     }
 
-    //Perform UI Test and Publish the report
-    stage('Perform UI Test') {
-      steps {
-        echo 'UI Test'
-        sh 'mvn test -f functionaltest/pom.xml'
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: "${uiPath}", reportFiles: 'index.html', reportName: 'UI-Test', reportTitles: ''])
-        slackSend channel: "${sChannel}", message: 'UI Test Completed Successfully'
-      }
-    }
-   
-    //Run Performance Test using Blazemeter
-    stage('Performance Test') {
-      steps {
-        echo 'Performance test'
-        //blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
-      }
-    }
+    // Parallay run UI test and Performance Test 
+    
+    stage('Run UI and Performance Test'){
+    
+      parallel {
+              
+              //Perform UI Test and Publish the report
+              stage('Perform UI Test') {
+                steps {
+                  echo 'UI Test'
+                  sh 'mvn test -f functionaltest/pom.xml'
+                  publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: "${uiPath}", reportFiles: 'index.html', reportName: 'UI-Test', reportTitles: ''])
+                  slackSend channel: "${sChannel}", message: 'UI Test Completed Successfully'
+                }
+              }
 
+              //Run Performance Test using Blazemeter
+              stage('Performance Test') {
+                steps {
+                  echo 'Performance test'
+                  //blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
+                  slackSend channel: "${sChannel}", message: 'Performance Test completed'
+                }
+              }
+
+      } //Parallel end 
+    } //Parallel Stage end 
+    
+    
     //Deploy the Webapp to Production tomcat Server 
     stage('Deploy to Production') {
       steps {
