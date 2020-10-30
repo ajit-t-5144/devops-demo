@@ -19,36 +19,29 @@ pipeline {
         echo 'Deploy to Test'
       }
     }
-    
-  } // Stage 1 complete 
-  
-  stages{
-    
-    // Start of Parallel Step 
-    parallel {
-        stage('Store Artifact') {
-          steps {
-            echo 'Store Artifact'
-          }
-        }
 
-        stage('Perform UI Test') {
-          steps {
-            echo 'UI Test'
-          }
-        }
+    stage('parallel'){
+      parallel {
+                stage('Store Artifact') {
+                  steps {
+                    echo 'Store Artifact'
+                  }
+                }
 
-        stage('Performance Test') {
-          steps {
-            echo 'Performance test'
-          }
-        }
-   
-    } // End of Parallel
-    
-  } // Stage 2 complete 
-  
-  stages{
+                stage('Perform UI Test') {
+                  steps {
+                    echo 'UI Test'
+                  }
+                }
+
+                stage('Performance Test') {
+                  steps {
+                    echo 'Performance test'
+                  }
+                }
+      } //parallel end 
+
+    }//Parallel stage end 
     
     stage('Deploy to Production') {
       steps {
@@ -62,5 +55,5 @@ pipeline {
       }
     }
 
-  }// Stage 3 complete 
+  }
 }
