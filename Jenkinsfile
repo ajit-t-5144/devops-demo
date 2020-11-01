@@ -16,7 +16,7 @@ pipeline {
     testPath = "/QAWebapp"
     
     //tomcat PROD URL and Path 
-    tomcatProd = "http://13.82.211.112:8080"
+    tomcatProd = "http://52.150.12.139:8080"
     prodPath = "/ProdWebapp"
     
     
