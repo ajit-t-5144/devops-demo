@@ -12,7 +12,7 @@ pipeline {
     gitBranch = "*/master"
     
     //tomcat TEST Url and Path 
-    tomcatTest = "http://13.82.213.187:8080"
+    tomcatTest = "http://52.249.249.68:8080"
     testPath = "/QAWebapp"
     
     //tomcat PROD URL and Path 
