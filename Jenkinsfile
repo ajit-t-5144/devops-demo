@@ -1,3 +1,6 @@
+def transitionInput = [transition: [id: '11']]
+
+
 pipeline {
   agent any
  
@@ -35,6 +38,11 @@ pipeline {
     //Slack Channel details
     sChannel = "#devops"
     
+    //jira Issue Transition 
+    transition = jiraGetIssueTransitions idOrKey: 'dev-4', site: 'jira'
+    
+    
+    
   }
   
   
@@ -42,6 +50,7 @@ pipeline {
   tools { 
         maven 'maven' 
         jdk  'jdk'
+        groovy 'groovy' 
     }
   
   // Job stages
@@ -51,7 +60,7 @@ pipeline {
     stage ('Initiation') {
       
       steps {
-        slackSend channel: "${sChannel}", message: 'Starting Jenkins Build for Devops Web App . Build Number:' + "${buildnum}"
+        slackSend channel: "${sChannel}", message: 'Starting Jenkins Build for Devops Web App . Build Number: ' + "${buildnum}"  + ' at ' + "${BUILD_TIMESTAMP}"
       }
     }
     // Static code analysis - inject sonarqube 
@@ -81,7 +90,7 @@ pipeline {
         echo 'Deploy to Test'
         sh 'mvn clean package'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatTest}")], contextPath: "${testPath}", war: '**/*.war'
-        slackSend channel: "${sChannel}", message: 'Code deployed to Test Server'
+        slackSend channel: "${sChannel}", message: 'Code deployed to Test Server. Build URL: ' + "${BUILD_URL}"
       }
     }
     
@@ -120,7 +129,7 @@ pipeline {
         echo 'Deploy to Production'
         sh 'mvn clean install'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: "${prodPath}", war: '**/*.war'
-        slackSend channel: "${sChannel}", message: 'Code deployed to prod server'
+        slackSend channel: "${sChannel}", message: 'Code deployed to prod server. Build URL: ' + "${BUILD_URL}"
       }
     }
     
@@ -137,7 +146,7 @@ pipeline {
     stage ('Completion') {
       
       steps {
-        slackSend channel: "${sChannel}", message: 'jenkins Build ' + "${buildnum}" + ' completed Successfully'
+        slackSend channel: "${sChannel}", message: "${currentBuild.getCurrentResult()}" ' :Jenkins Build ' + "${buildnum}" + ' completed Successfully at : ' + "${BUILD_TIMESTAMP}"
       }
     }
     
