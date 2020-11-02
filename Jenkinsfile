@@ -1,4 +1,10 @@
-def transitionInput = [transition: [id: '11']]
+//Jenkins Pipeline execution
+
+// Jira Transition input define
+def ToDoTransition = [transition: [id: '11']]         // Jira status To Do  
+def InProgressTransition = [transition: [id: '21']]   // IN  Progress
+def InTestTransition = [transition: [id: '41']]       // IN Test 
+def DoneTransition = [transition: [id: '31']]         // Done 
 
 
 pipeline {
@@ -9,6 +15,10 @@ pipeline {
     
     //System Variables
     buildnum = currentBuild.getNumber()
+    
+    // Jira Issue Number
+    
+    jiraIssue = 'dev-4'
     
     //git repo details 
     gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
@@ -39,9 +49,7 @@ pipeline {
     sChannel = "#devops"
     
     //jira Issue Transition 
-    transition = jiraGetIssueTransitions idOrKey: 'dev-4', site: 'jira'
-    
-    
+    transition = jiraGetIssueTransitions idOrKey: "${jiraIssue}", site: 'jira'
     
   }
   
@@ -72,6 +80,9 @@ pipeline {
         {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=${sonarPath} -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=${sonarInclusion} -Dsonar.test.exclusions=${sonarExclusion} -Dsonar.login=admin -Dsonar.password=admin' 
             }
         slackSend channel: '#devops', message: 'Stattic test analysis completed'
+        jiraAddComment comment: 'Static code Analysis completed ', idOrKey: "${jiraIssue}", site: 'jira'
+        jiraTransitionIssue idOrKey: "${jiraIssue}", input: InProgressTransition , site: 'jira'
+        
       }
     } // Stage end
 
@@ -91,6 +102,8 @@ pipeline {
         sh 'mvn clean package'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatTest}")], contextPath: "${testPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to Test Server. Build URL: ' + "${BUILD_URL}"
+        jiraAddComment idOrKey: "${jiraIssue}", site: 'jira' , comment: "${currentBuild.getCurrentResult()}" + ' Code deployed to Test on ' + "${BUILD_TIMESTAMP}" +  ' Build No: ' + "${buildnum}" +  ' Build URL : ' + "${BUILD_URL}"
+        jiraTransitionIssue idOrKey: "${jiraIssue}", input: InTestTransition , site: 'jira'
       }
     }
     
@@ -130,6 +143,8 @@ pipeline {
         sh 'mvn clean install'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: "${prodPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to prod server. Build URL: ' + "${BUILD_URL}"
+        jiraAddComment idOrKey: "${jiraIssue}", site: 'jira' , comment: "${currentBuild.getCurrentResult()}" + ' Code deployed to PROD on ' + "${BUILD_TIMESTAMP}" +  ' Build No: ' + "${buildnum}" +  ' Build URL : ' + "${BUILD_URL}"
+        jiraTransitionIssue idOrKey: "${jiraIssue}", input: DoneTransition , site: 'jira'
       }
     }
     
