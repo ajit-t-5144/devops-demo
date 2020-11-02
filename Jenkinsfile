@@ -25,16 +25,16 @@ pipeline {
     gitBranch = "*/master"
     
     //tomcat TEST Url and Path 
-    tomcatTest = "http://52.255.175.153:8080"
+    tomcatTest = "http://52.188.149.71:8080"
     testPath = "/QAWebapp"
     
     //tomcat PROD URL and Path 
-    tomcatProd = "http://40.121.128.206:8080"
+    tomcatProd = "http://52.188.209.130:8080"
     prodPath = "/ProdWebapp"
     
     
     // Sonarqube URL 
-    sonarPath = 'http://52.186.156.68:9000'
+    sonarPath = 'http://13.72.87.23:9000'
     
     sonarInclusion = '**/test/java/servlet/createpage_junit.java'
     sonarExclusion = '**/test/java/servlet/createpage_junit.java'
