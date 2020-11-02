@@ -34,7 +34,7 @@ pipeline {
     
     
     // Sonarqube URL 
-    sonarPath = 'http://40.88.147.42:9000'
+    sonarPath = 'http://52.186.156.68:9000'
     
     sonarInclusion = '**/test/java/servlet/createpage_junit.java'
     sonarExclusion = '**/test/java/servlet/createpage_junit.java'
