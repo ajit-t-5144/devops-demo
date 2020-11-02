@@ -161,7 +161,7 @@ pipeline {
     stage ('Completion') {
       
       steps {
-        slackSend channel: "${sChannel}", message: "${currentBuild.getCurrentResult()}" ' :Jenkins Build ' + "${buildnum}" + ' completed Successfully at : ' + "${BUILD_TIMESTAMP}"
+        slackSend channel: "${sChannel}", message: "${currentBuild.getCurrentResult()}" + ' :Jenkins Build ' + "${buildnum}" + ' completed Successfully at : ' + "${BUILD_TIMESTAMP}"
       }
     }
     
