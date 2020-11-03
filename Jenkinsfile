@@ -102,8 +102,14 @@ pipeline {
         slackSend channel: "${sChannel}", message: 'Code deployed to Test Server. Build URL: ' + "${BUILD_URL}"
         jiraAddComment idOrKey: "${jiraIssue}", site: 'jira' , comment: "${currentBuild.getCurrentResult()}" + ' Code deployed to Test on ' + "${BUILD_TIMESTAMP}" +  ' Build No: ' + "${buildnum}" +  ' Build URL : ' + "${BUILD_URL}"
         jiraTransitionIssue idOrKey: "${jiraIssue}", input: InTestTransition , site: 'jira'
-        jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
-        jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+        post{
+          always{
+            jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+            jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+          }
+        }
+        //jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+        //jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
       }
     }
     
@@ -144,10 +150,15 @@ pipeline {
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: "${prodPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to prod server. Build URL: ' + "${BUILD_URL}"
         jiraAddComment idOrKey: "${jiraIssue}", site: 'jira' , comment: "${currentBuild.getCurrentResult()}" + ' Code deployed to PROD on ' + "${BUILD_TIMESTAMP}" +  ' Build No: ' + "${buildnum}" +  ' Build URL : ' + "${BUILD_URL}"
-        jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+        //jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
         jiraTransitionIssue idOrKey: "${jiraIssue}", input: DoneTransition , site: 'jira'
-        jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
-        
+        //jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+        post{
+          always{
+            jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+            jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
+          }
+        }
       }
     }
     
