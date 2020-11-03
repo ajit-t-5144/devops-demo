@@ -1,4 +1,4 @@
-//Jenkins Pipeline execution
+//Jenkins Pipeline execution test
 
 // Jira Transition input define
 def ToDoTransition = [transition: [id: '11']]         // Jira status To Do  
