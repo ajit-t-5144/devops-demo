@@ -20,7 +20,7 @@ pipeline {
     
     //git repo details 
     gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
-    gitBranch = "*/Dev-4"
+    gitBranch = "*/master"
     
     //tomcat TEST Url and Path 
     tomcatTest = "http://52.188.149.71:8080"
