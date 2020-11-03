@@ -108,7 +108,7 @@ pipeline {
       }
       post{
           always{
-            jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+            jiraSendBuildInfo branch: 'dev-4', site: 'ajitsahu.atlassian.net'
             jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
           }
         }
@@ -158,7 +158,7 @@ pipeline {
       }
       post{
           always{
-            jiraSendBuildInfo branch: "${jiraIssue}", site: 'ajitsahu.atlassian.net'
+            jiraSendBuildInfo branch: 'dev-4', site: 'ajitsahu.atlassian.net'
             jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
           }
         }
