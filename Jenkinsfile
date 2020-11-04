@@ -213,8 +213,8 @@ pipeline {
     stage ('Completion') {
       
       steps {
-        slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
-         slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
+        slackSend channel: "${sChannel}", message: 'Docker Image ' + "${dockerImagename}" + ' pushed to Docker hub'
+        slackSend channel: "${sChannel}", message: 'Docker Image ' + "${dockerImagename}" + ' now running on http://' + "${dockerIP}" + ':8081/AVNCommunication-1.0'
         slackSend channel: "${sChannel}", message: "${currentBuild.getCurrentResult()}" + ' :Jenkins Build ' + "${buildnum}" + ' completed Successfully at : ' + "${BUILD_TIMESTAMP}"
       }
     }
