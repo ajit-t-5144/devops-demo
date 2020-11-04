@@ -18,6 +18,12 @@ pipeline {
     
     jiraIssue = 'dev-4'
     
+    //docker run 
+    
+    dockerImagename = "ajit5144/devops-demo-new-app-${buildnum}"
+    dockerRun = "docker run -p 8081:8080 -p 5432:5432 -d ${dockerImagename}"
+    dockerIP = "52.179.174.220"
+    
     //git repo details 
     gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
     gitBranch = "*/master"
@@ -50,7 +56,6 @@ pipeline {
     transition = jiraGetIssueTransitions idOrKey: "${jiraIssue}", site: 'jira'
     
   }
-  
   
   //Global tools 
   tools { 
@@ -147,7 +152,7 @@ pipeline {
     stage('Deploy to Production') {
       steps {
         echo 'Deploy to Production'
-        sh 'mvn clean install'
+        sh 'mvn clean package'
         deploy adapters: [tomcat8(credentialsId: 'tomcat', path: '', url: "${tomcatProd}")], contextPath: "${prodPath}", war: '**/*.war'
         slackSend channel: "${sChannel}", message: 'Code deployed to prod server. Build URL: ' + "${BUILD_URL}"
         jiraAddComment idOrKey: "${jiraIssue}", site: 'jira' , comment: "${currentBuild.getCurrentResult()}" + ' Code deployed to PROD on ' + "${BUILD_TIMESTAMP}" +  ' Build No: ' + "${buildnum}" +  ' Build URL : ' + "${BUILD_URL}"
@@ -173,6 +178,35 @@ pipeline {
         slackSend channel: "${sChannel}", message: 'Sanity test completed successfully'
       }
     }
+    
+    stage(' Build Docker Image'){
+            steps{ 
+                 sh 'docker build -t ${dockerImagename} --pull=true /var/lib/jenkins/workspace/devops-demo'
+                 //echo "${dockerImagename}"
+            } 
+         }//Docker build done 
+    
+    
+     stage(' Push to Docker Hub'){
+          steps{ 
+               withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhub')]) {
+                    sh "docker login -u ajit5144 -p ${dockerhub}"
+                 //echo "${dockerImagename}"
+                }
+                sh "docker push ${dockerImagename}"
+            }
+       
+        }//Docker Push done
+        
+     stage('Run Container on Docker instance') {
+            steps{
+        
+            sshagent(['docker-c']) {
+              sh "ssh -o StrictHostKeyChecking=no azureuser@${dockerIP} ${dockerRun}"
+                }
+            }   
+            
+        }//Run container end 
     
     stage ('Completion') {
       
