@@ -24,7 +24,7 @@ pipeline {
     
     dockerImagename = "ajit5144/devops-demo-new-app-${buildnum}"
     dockerRun = "docker run -p 8081:8080 -p 5432:5432 -d ${dockerImagename}"
-    dockerIP = "40.65.231.122"
+    dockerIP = "137.116.62.104"
     dockerPath = "/var/lib/jenkins/workspace/devops-demo_${branchName}"
     
     //git repo details 
@@ -85,7 +85,7 @@ pipeline {
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
         {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=${sonarPath} -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=${sonarInclusion} -Dsonar.test.exclusions=${sonarExclusion} -Dsonar.login=admin -Dsonar.password=admin' 
             }
-        slackSend channel: '#devops', message: "Static code analysis completed . Please find the resport at ${sonarPath}"
+        slackSend channel: '#devops', message: "Static code analysis completed . Please find the sonar analysis report at ${sonarPath}"
         jiraAddComment comment: 'Static code Analysis completed ', idOrKey: "${jiraIssue}", site: 'jira'
         jiraTransitionIssue idOrKey: "${jiraIssue}", input: InProgressTransition , site: 'jira'
         
