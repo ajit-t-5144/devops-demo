@@ -194,8 +194,9 @@ pipeline {
                     
                 }
                 sh "docker push ${dockerImagename}"
-                slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
+        
             }
+          slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
        
         }//Docker Push done
         
@@ -205,8 +206,10 @@ pipeline {
             sshagent(['docker-c']) {
               sh "ssh -o StrictHostKeyChecking=no azureuser@${dockerIP} ${dockerRun}"
                 }
-              slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
-            }   
+              
+            }  
+            
+          slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
             
         }//Run container end 
     
