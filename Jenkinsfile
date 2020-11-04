@@ -3,7 +3,7 @@ def ToDoTransition = [transition: [id: '11']]         // Jira status To Do
 def InProgressTransition = [transition: [id: '21']]   // IN  Progress
 def InTestTransition = [transition: [id: '41']]       // IN Test 
 def DoneTransition = [transition: [id: '31']]         // Done 
-def association = [Association{associationType=serviceIdOrKeys, values=['DEV-4']}]
+//def association = [Association{associationType=serviceIdOrKeys, values=['DEV-4']}]
 
 pipeline {
   agent any
