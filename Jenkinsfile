@@ -3,6 +3,7 @@ def ToDoTransition = [transition: [id: '11']]         // Jira status To Do
 def InProgressTransition = [transition: [id: '21']]   // IN  Progress
 def InTestTransition = [transition: [id: '41']]       // IN Test 
 def DoneTransition = [transition: [id: '31']]         // Done 
+def association = [Association{associationType=serviceIdOrKeys, values=['DEV-4']}]
 
 pipeline {
   agent any
@@ -115,7 +116,8 @@ pipeline {
       post{
           always{
             jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
-            jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+            jiraSendDeploymentInfo environmentId: 'us-stg-1', environmentName: 'devops-demo', environmentType: 'testing', serviceIds: ['DEV-4'], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+            //jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
           }
         }
     }
@@ -165,7 +167,9 @@ pipeline {
       post{
           always{
             jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
-            jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
+            jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'devops-demo', environmentType: 'production', serviceIds: ['DEV-4'], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+            
+            //jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
           }
         }
     }
