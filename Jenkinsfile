@@ -162,7 +162,7 @@ pipeline {
       }
       post{
           always{
-            jiraSendBuildInfo branch: 'dev-4', site: 'ajitsahu.atlassian.net'
+            jiraSendBuildInfo branch: 'DEV-4', site: 'ajitsahu.atlassian.net'
             jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
           }
         }
@@ -181,7 +181,6 @@ pipeline {
     stage(' Build Docker Image'){
             steps{ 
                  sh 'docker build -t ${dockerImagename} --pull=true /var/lib/jenkins/workspace/devops-demo'
-                 //echo "${dockerImagename}"
             } 
          }//Docker build done 
     
@@ -190,9 +189,10 @@ pipeline {
           steps{ 
                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhub')]) {
                     sh "docker login -u ajit5144 -p ${dockerhub}"
-                 //echo "${dockerImagename}"
+                    
                 }
                 sh "docker push ${dockerImagename}"
+                slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
             }
        
         }//Docker Push done
@@ -203,6 +203,7 @@ pipeline {
             sshagent(['docker-c']) {
               sh "ssh -o StrictHostKeyChecking=no azureuser@${dockerIP} ${dockerRun}"
                 }
+              slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
             }   
             
         }//Run container end 
