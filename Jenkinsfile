@@ -16,12 +16,14 @@ pipeline {
     // Jira Issue Number
     
     jiraIssue = 'dev-4'
+    branchName = 'DEV-4'
     
     //docker run 
     
     dockerImagename = "ajit5144/devops-demo-new-app-${buildnum}"
     dockerRun = "docker run -p 8081:8080 -p 5432:5432 -d ${dockerImagename}"
     dockerIP = "52.179.174.220"
+    dockerPath = "/var/lib/jenkins/workspace/devops-demo_${branchName}"
     
     //git repo details 
     gitURL = "https://github.com/ajit-t-5144/DevOps-Demo-WebApp.git"
@@ -112,7 +114,7 @@ pipeline {
       }
       post{
           always{
-            jiraSendBuildInfo branch: 'dev-4', site: 'ajitsahu.atlassian.net'
+            jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
             jiraSendDeploymentInfo environmentId: 'test-1', environmentName: 'test-1', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
           }
         }
@@ -162,7 +164,7 @@ pipeline {
       }
       post{
           always{
-            jiraSendBuildInfo branch: 'DEV-4', site: 'ajitsahu.atlassian.net'
+            jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
             jiraSendDeploymentInfo environmentId: 'prod-1', environmentName: 'prod-1', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'done'
           }
         }
@@ -180,7 +182,7 @@ pipeline {
     
     stage(' Build Docker Image'){
             steps{ 
-                 sh 'docker build -t ${dockerImagename} --pull=true /var/lib/jenkins/workspace/devops-demo'
+              sh 'docker build -t ${dockerImagename} --pull=true ${dockerPath}'
             } 
          }//Docker build done 
     
