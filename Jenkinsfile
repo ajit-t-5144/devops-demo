@@ -85,7 +85,7 @@ pipeline {
         withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonarqube')
         {sh 'mvn clean compile sonar:sonar -Dsonar.host.url=${sonarPath} -Dsonar.sources=. -Dsonar.tests=. -Dsonar.inclusions=${sonarInclusion} -Dsonar.test.exclusions=${sonarExclusion} -Dsonar.login=admin -Dsonar.password=admin' 
             }
-        slackSend channel: '#devops', message: 'Stattic test analysis completed'
+        slackSend channel: '#devops', message: "Static code analysis completed . Please find the resport at ${sonarPath}"
         jiraAddComment comment: 'Static code Analysis completed ', idOrKey: "${jiraIssue}", site: 'jira'
         jiraTransitionIssue idOrKey: "${jiraIssue}", input: InProgressTransition , site: 'jira'
         
@@ -114,7 +114,7 @@ pipeline {
       post{
           always{
             jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
-            jiraSendDeploymentInfo environmentId: 'us-stg-1', environmentName: 'devops-demo', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+            jiraSendDeploymentInfo environmentId: 'us-stg-1', environmentName: 'devops-demo-test', environmentType: 'testing', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
           }
         }
     }
@@ -163,7 +163,7 @@ pipeline {
       post{
           always{
             jiraSendBuildInfo branch: "${branchName}", site: 'ajitsahu.atlassian.net'
-            jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'devops-demo', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'in_progress'
+            jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'devops-demo-prod', environmentType: 'production', serviceIds: [''], site: 'ajitsahu.atlassian.net', state: 'successful'
           }
         }
     }
