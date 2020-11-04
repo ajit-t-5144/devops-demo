@@ -4,7 +4,6 @@ def InProgressTransition = [transition: [id: '21']]   // IN  Progress
 def InTestTransition = [transition: [id: '41']]       // IN Test 
 def DoneTransition = [transition: [id: '31']]         // Done 
 
-
 pipeline {
   agent any
  
