@@ -182,7 +182,7 @@ pipeline {
     
     stage(' Build Docker Image'){
             steps{ 
-              sh 'docker build -t ${dockerImagename} --pull=true ${dockerPath}'
+              sh "docker build -t ${dockerImagename} --pull=true ${dockerPath}"
             } 
          }//Docker build done 
     
@@ -196,8 +196,7 @@ pipeline {
                 sh "docker push ${dockerImagename}"
         
             }
-          slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
-       
+
         }//Docker Push done
         
      stage('Run Container on Docker instance') {
@@ -209,13 +208,13 @@ pipeline {
               
             }  
             
-          slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
-            
         }//Run container end 
     
     stage ('Completion') {
       
       steps {
+        slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' pushed to Docker hub'
+         slackSend channel: "${sChannel}", message: 'Docker Image ' + ${dockerImagename} + ' now running on http://' + ${dockerIP} + ':8081/AVNCommunication-1.0'
         slackSend channel: "${sChannel}", message: "${currentBuild.getCurrentResult()}" + ' :Jenkins Build ' + "${buildnum}" + ' completed Successfully at : ' + "${BUILD_TIMESTAMP}"
       }
     }
