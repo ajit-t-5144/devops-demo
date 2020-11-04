@@ -1,4 +1,4 @@
-// Jira Transition input define //gitwebhook
+// Jira Transition input define //gitwebhook //test jira deploy
 def ToDoTransition = [transition: [id: '11']]         // Jira status To Do  
 def InProgressTransition = [transition: [id: '21']]   // IN  Progress
 def InTestTransition = [transition: [id: '41']]       // IN Test 
