@@ -24,7 +24,7 @@ pipeline {
     
     dockerImagename = "ajit5144/devops-demo-new-app-${buildnum}"
     dockerRun = "docker run -p 8081:8080 -p 5432:5432 -d ${dockerImagename}"
-    dockerIP = "137.116.62.104"
+    dockerIP = "52.167.235.198"
     dockerPath = "/var/lib/jenkins/workspace/devops-demo_${branchName}"
     
     //git repo details 
@@ -143,7 +143,7 @@ pipeline {
       stage('Performance Test') {
         steps {
             echo 'Performance test'
-            blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
+            //blazeMeterTest(credentialsId: 'blazemeter', workspaceId: '680689', testId: '8642591.taurus')
             slackSend channel: "${sChannel}", message: 'Performance Test completed'
            }
        }  // Performance test end 
